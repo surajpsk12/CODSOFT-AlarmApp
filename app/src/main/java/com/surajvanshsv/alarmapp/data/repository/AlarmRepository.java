@@ -1,6 +1,7 @@
 package com.surajvanshsv.alarmapp.data.repository;
 
 import android.app.Application;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import androidx.lifecycle.LiveData;
 

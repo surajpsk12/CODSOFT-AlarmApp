@@ -13,19 +13,28 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("AlarmReceiver", "Alarm triggered!");
 
-        if (intent == null || context == null) {
-            Log.e("AlarmReceiver", "Intent or context is null");
+        if (context == null || intent == null) {
+            Log.e("AlarmReceiver", "Context or Intent is null");
             return;
         }
 
+        // 🔊 Get tone URI and label
         String toneUri = intent.getStringExtra("toneUri");
+        String label = intent.getStringExtra("label");
+
         if (toneUri == null) {
-            Log.w("AlarmReceiver", "toneUri is null. Default alarm tone will be used.");
+            Log.w("AlarmReceiver", "toneUri is null. Default tone will be used.");
         }
 
+        if (label == null || label.trim().isEmpty()) {
+            label = "Alarm is ringing";
+        }
+
+        // 📢 Launch AlarmRingActivity
         Intent ringIntent = new Intent(context, AlarmRingActivity.class);
         ringIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         ringIntent.putExtra("toneUri", toneUri);
+        ringIntent.putExtra("label", label);
 
         try {
             context.startActivity(ringIntent);

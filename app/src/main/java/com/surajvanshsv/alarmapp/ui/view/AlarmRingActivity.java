@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -29,7 +30,7 @@ public class AlarmRingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 🔁 Apply theme from preferences
+        // 🌓 Apply light/dark theme
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean isDark = prefs.getBoolean(KEY_IS_DARK_MODE, false);
         AppCompatDelegate.setDefaultNightMode(isDark ?
@@ -38,13 +39,12 @@ public class AlarmRingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_ring);
 
-        // 🧱 Show over lock screen (API 27+)
+        // 📱 Display over lock screen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
         }
 
-        // ✅ Backward compatibility
         getWindow().addFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
@@ -52,13 +52,13 @@ public class AlarmRingActivity extends AppCompatActivity {
                         WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
 
-        // 🔓 Dismiss keyguard
+        // 🔓 Unlock screen if locked
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        if (keyguardManager != null) {
+        if (keyguardManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             keyguardManager.requestDismissKeyguard(this, null);
         }
 
-        // 🔋 Acquire wakelock (30 seconds)
+        // 🔋 Acquire wakelock to keep screen on
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         if (pm != null) {
             wakeLock = pm.newWakeLock(
@@ -67,17 +67,31 @@ public class AlarmRingActivity extends AppCompatActivity {
                             PowerManager.ON_AFTER_RELEASE,
                     "alarmapp:wakelock"
             );
-            wakeLock.acquire(30_000);
+            wakeLock.acquire(30_000); // 30 seconds
         }
 
-        // 🔊 Get tone URI
+        // 🔊 Get tone and label from intent
         String uriString = getIntent().getStringExtra("toneUri");
-        alarmUri = uriString != null ? Uri.parse(uriString) :
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        String label = getIntent().getStringExtra("label");
 
+        if (label == null || label.trim().isEmpty()) {
+            label = "Alarm is ringing!";
+        }
+
+        alarmUri = uriString != null ? Uri.parse(uriString)
+                : RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+
+        // 🏷️ Set label in UI
+        TextView tvWakeUp = findViewById(R.id.tvWakeUp);
+        TextView tvAlarmLabel = findViewById(R.id.tvAlarmLabel);
+
+        tvWakeUp.setText("Alarm is ringing!");
+        tvAlarmLabel.setText(label);
+
+        // 🔁 Play alarm tone
         playAlarmTone(alarmUri);
 
-        // 🎚 Button setup
+        // 🎚 Buttons
         Button btnSnooze = findViewById(R.id.btnSnooze);
         Button btnDismiss = findViewById(R.id.btnDismiss);
 
@@ -87,7 +101,7 @@ public class AlarmRingActivity extends AppCompatActivity {
         });
 
         btnSnooze.setOnClickListener(v -> {
-            // Optional: schedule snooze logic (e.g., +10 mins)
+            // ⏰ Optional: Add snooze logic here (+10 mins etc.)
             stopAlarm();
             finish();
         });

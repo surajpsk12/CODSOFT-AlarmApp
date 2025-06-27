@@ -1,4 +1,5 @@
 package com.surajvanshsv.alarmapp.ui.viewmodel;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import android.app.Application;
 

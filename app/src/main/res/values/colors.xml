@@ -21,6 +21,9 @@
     <color name="md_theme_light_error">#B00020</color>
     <color name="md_theme_light_onError">#FFFFFF</color>
 
+
+
+
     <!-- Dark Theme Colors -->
     <color name="md_theme_dark_primary">#FFB74D</color>
     <color name="md_theme_dark_onPrimary">#000000</color>

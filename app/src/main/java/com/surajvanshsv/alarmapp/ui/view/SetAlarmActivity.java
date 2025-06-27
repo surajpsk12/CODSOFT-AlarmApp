@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.chip.Chip;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.snackbar.Snackbar;
 import com.surajvanshsv.alarmapp.R;
 import com.surajvanshsv.alarmapp.data.db.AlarmEntity;
@@ -108,9 +109,11 @@ public class SetAlarmActivity extends AppCompatActivity {
                 selectedTime.set(Calendar.MINUTE, minute1);
                 selectedTime.set(Calendar.SECOND, 0);
                 selectedTime.set(Calendar.MILLISECOND, 0);
-                String formatted = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(selectedTime.getTime());
+
+                // ✅ Display in 12-hour format with AM/PM
+                String formatted = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(selectedTime.getTime());
                 tvPickedTime.setText(formatted);
-            }, hour, minute, true).show();
+            }, hour, minute, false).show(); // false = 12-hour format
         });
 
         btnPickTone.setOnClickListener(v -> {
@@ -132,7 +135,7 @@ public class SetAlarmActivity extends AppCompatActivity {
             }
 
             long triggerTime = selectedTime.getTimeInMillis();
-            String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(selectedTime.getTime());
+            String time = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(selectedTime.getTime());
 
             String label = etAlarmLabel.getText().toString().trim();
             if (label.isEmpty()) label = "Alarm";

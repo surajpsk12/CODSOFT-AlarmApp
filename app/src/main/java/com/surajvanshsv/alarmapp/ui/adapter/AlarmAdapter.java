@@ -11,8 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.surajvanshsv.alarmapp.R;
 import com.surajvanshsv.alarmapp.model.Alarm;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHolder> {
 
@@ -20,12 +24,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     private final OnAlarmToggleListener toggleListener;
     private final OnAlarmItemClickListener itemClickListener;
 
-    // 🔸 Interface to toggle ON/OFF
     public interface OnAlarmToggleListener {
         void onToggle(Alarm alarm, boolean isEnabled);
     }
 
-    // 🔸 Interface for item click (Edit)
     public interface OnAlarmItemClickListener {
         void onClick(Alarm alarm);
     }
@@ -52,11 +54,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     public void onBindViewHolder(@NonNull AlarmViewHolder holder, int position) {
         Alarm alarm = alarmList.get(position);
 
-        holder.tvAlarmTime.setText(alarm.getTime());
+        // 🔁 Format time to 12-hour with AM/PM
+        String formattedTime = alarm.getTime();
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            formattedTime = outputFormat.format(inputFormat.parse(alarm.getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        holder.tvAlarmTime.setText(formattedTime);
         holder.tvAlarmDays.setText(alarm.getRepeatDays());
         holder.tvAlarmLabel.setText(alarm.getLabel());
 
-        // Prevent flickering
         holder.switchAlarm.setOnCheckedChangeListener(null);
         holder.switchAlarm.setChecked(alarm.isEnabled());
 
@@ -64,7 +75,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             toggleListener.onToggle(alarm, isChecked);
         });
 
-        // 🟢 Edit alarm on item click (excluding switch)
         holder.itemView.setOnClickListener(v -> itemClickListener.onClick(alarm));
     }
 

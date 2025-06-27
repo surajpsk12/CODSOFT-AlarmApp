@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import com.surajvanshsv.alarmapp.data.db.AlarmEntity;
 import com.surajvanshsv.alarmapp.receiver.AlarmReceiver;

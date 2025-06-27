@@ -35,7 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
+import java.util.Locale;import com.google.android.material.materialswitch.MaterialSwitch;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -150,26 +151,33 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.top_app_bar_menu, menu);
         MenuItem item = menu.findItem(R.id.action_toggle_theme);
 
-        // ✅ Inflate the actionLayout manually
         View actionView = item.getActionView();
         if (actionView != null) {
-            Switch themeSwitch = actionView.findViewById(R.id.themeSwitch);
+            TextView themeLabel = actionView.findViewById(R.id.themeLabel);
             SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             boolean isDark = prefs.getBoolean(KEY_IS_DARK_MODE, false);
-            themeSwitch.setChecked(isDark);
 
-            themeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Set initial text
+            themeLabel.setText(isDark ? "Light Mode" : "Dark Mode");
+
+            // Set click listener on TextView
+            actionView.setOnClickListener(v -> {
+                boolean newTheme = !isDark;
+
+                // Save new preference
                 getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                         .edit()
-                        .putBoolean(KEY_IS_DARK_MODE, isChecked)
+                        .putBoolean(KEY_IS_DARK_MODE, newTheme)
                         .apply();
 
-                AppCompatDelegate.setDefaultNightMode(isChecked ?
+                AppCompatDelegate.setDefaultNightMode(newTheme ?
                         AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+
                 recreate();
             });
         }
 
         return true;
     }
+
 }

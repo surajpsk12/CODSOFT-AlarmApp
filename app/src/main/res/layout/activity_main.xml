@@ -16,7 +16,8 @@
         android:background="?attr/colorPrimary"
         app:title="Alarm App"
         app:titleTextColor="?android:attr/textColorPrimary"
-        app:menu="@menu/top_app_bar_menu"/>
+        app:menu="@menu/top_app_bar_menu"
+        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"  />
 
     <!-- Theme Toggle inside menu file for better layout (we’ll define menu later) -->
 

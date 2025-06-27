@@ -35,6 +35,7 @@ dependencies {
     implementation (libs.room.runtime)
     annotationProcessor (libs.room.compiler)
     implementation (libs.lifecycle.livedata.ktx)
+    implementation (libs.material.v1110)
 
     implementation(libs.appcompat)
     implementation(libs.material)
